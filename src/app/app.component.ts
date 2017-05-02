@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { HttpService} from './http.services';
 import { LocationPoint } from './local';
 import {FormGroup, FormControl, FormBuilder, Validators, AbstractControl} from '@angular/forms';
+// import {Control} from '@angular2/common';
 
 import { ValidatorFormService } from './validator.services';
 import {Map, control, tileLayer} from 'leaflet';
@@ -31,7 +32,7 @@ export class AppComponent implements OnInit {
   isFormedOpen: boolean = true;
   indexOfMarkerSelected: number = -1;
 
-  constructor(private httpService: HttpService, private _fb: FormBuilder, private validatorService: ValidatorFormService) {
+  constructor(private httpService: HttpService, private _fb: FormBuilder, private validatorForm: ValidatorFormService) {
     this.namePoint = '';
     this.width = 0;
     this.length = 0;
@@ -41,18 +42,19 @@ export class AppComponent implements OnInit {
     }
 
   public ngOnInit(): void {
-
+    console.log('ok');
     this.httpService.getLocation()
       .subscribe(result => {this.locations = result.json(); this.AddJsonMarkers(); });
     this.jsonLength = this.locations.length;
+
 
     this.initMap();
     this.formHide();
 
     this.myForm = this._fb.group({
       namePoint: ['', [Validators.required, Validators.minLength(5)]],
-      width: ['', [Validators.required, this.validatorService.maxWidthValidator]],
-      length: ['', [Validators.required, this.validatorService.maxLengthValidator]]
+      width: ['', [Validators.required, this.validatorForm.maxWidthValidator]],
+      length: ['', [Validators.required, this.validatorForm.maxLengthValidator]]
     });
 
 
@@ -82,7 +84,6 @@ export class AppComponent implements OnInit {
   }
 
   onClickedList(event, i ) {
-    console.log(i);
     if ((i !== this.indexOfMarkerSelected) && (this.locations[this.indexOfMarkerSelected]['selected'] == false)) {
       this.locations[this.indexOfMarkerSelected]['selected'] = !this.locations[this.indexOfMarkerSelected]['selected'];
       this.marks[this.indexOfMarkerSelected].setIcon(this.icoTwo);
@@ -156,7 +157,8 @@ export class AppComponent implements OnInit {
       event.width = 0;
       event.length = 0;
       console.log(this.locations);
-    }
+  }
+
   deleteLocation(index) {
       console.log(index, this.marks, this.locations);
       if (confirm('are you sure?') === true ) {
