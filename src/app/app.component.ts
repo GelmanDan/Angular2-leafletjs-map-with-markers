@@ -138,9 +138,8 @@ export class AppComponent implements OnInit {
         namePoint: event.namePoint,
         width: event.width,
         length: event.length,
-        selected: false
+        selected: true
       };
-    console.log(this.locationObj);
       const lon = <number>this.locationObj.length;
       const lat = <number>this.locationObj.width;
 
@@ -153,10 +152,8 @@ export class AppComponent implements OnInit {
       this.marks.push(mark);
       this.mapElement.setView(markerLocation, 35);
       this.locations.push(this.locationObj);
-      event.namePoint = '';
-      event.width = 0;
-      event.length = 0;
-      console.log(this.locations);
+      console.log(this.myForm.value);
+      this.myForm.reset();
   }
 
   deleteLocation(index) {
