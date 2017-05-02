@@ -1,0 +1,85 @@
+
+  .box1 {
+    border: solid 1px #006699;
+    padding: 20px;
+    background: #f3f3f3;
+    border-radius: 5px;
+  }
+  #form{
+    padding-top: 30px;
+    padding-bottom: 30px;
+    width:100%;
+    overflow:hidden;
+    top:300px;
+  }
+  #form button{
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  .alert{
+    background-color: salmon;
+    width: 370px;
+    color: white;
+    padding: 10px 5px 10px 10px;
+  }
+  .button{
+    margin: 15px 15px 15px 15px;
+  }
+  #button-form{
+    margin: 15px 15px 15px 15px;
+  }
+  .map input.form-control {
+    width: 380px;
+    height: 36px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    vertical-align: top;
+  }
+  .map .form-group label {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  .map .form-group{
+    display: inline-flex;
+  }
+  .btn{
+    display: inline-flex;
+  }
+
+  .map .checked {
+    text-decoration: underline;
+    color: #006699;
+  }
+
+  .map a {
+    color: chocolate;
+    text-decoration: none;
+  }
+
+  .map button {
+    height: 36px;
+    font-size: 1.1em;
+    vertical-align: top;
+    border: solid 1px #999;
+    border-radius: 2px;
+  }
+  .map span{
+    padding:15px 15px 15px 15px;
+  }
+  .map .res{
+    height: 40px;
+  }
+  .map .delete-icon {
+    display: inline-block;
+    cursor: pointer;
+  }
+.show-class {
+  color:rgb(85, 26, 139);
+}
+
+.hide-class {
+  color:rgb(191,34,34);
+
+}
+

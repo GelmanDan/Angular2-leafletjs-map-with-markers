@@ -1,0 +1,20 @@
+[
+  {
+    "namePoint":"NYC",
+    "width":"-73.987495",
+    "length":"40.700392",
+    "selected":"false"
+  },
+  {
+    "namePoint":"London",
+    "width":"-0.09",
+    "length":"51.505",
+    "selected":"false"
+  },
+  {
+    "namePoint":"Sydney",
+    "width":"151.215174",
+    "length":"-33.857162",
+    "selected":"false"
+  }
+]

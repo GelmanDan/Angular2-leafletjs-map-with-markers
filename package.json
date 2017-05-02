@@ -20,9 +20,11 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
+    "angular2-leaflet": "git+https://github.com/jongleb/angular2-leaflet.git",
     "core-js": "^2.4.1",
+    "leaflet": "^1.0.3",
     "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4"
+    "zone.js": "^0.8.8"
   },
   "devDependencies": {
     "@angular/cli": "1.0.1",
