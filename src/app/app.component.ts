@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import { HttpService} from './http.services';
 import { LocationPoint } from './local';
 import {FormGroup, FormControl, FormBuilder, Validators, AbstractControl} from '@angular/forms';
-//import {Control} from '@angular2/common';
 
+import { ValidatorFormService } from './validator.services';
 import {Map, control, tileLayer} from 'leaflet';
 import map = L.map;
 import Icon = L.Icon;
@@ -14,7 +14,7 @@ import Control = L.Control;
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [HttpService]
+  providers: [HttpService, ValidatorFormService]
 })
 export class AppComponent implements OnInit {
   namePoint: string;
@@ -28,8 +28,10 @@ export class AppComponent implements OnInit {
   marks: any;
   jsonLength: number;
   myForm: FormGroup;
+  isFormedOpen: boolean = true;
+  indexOfMarkerSelected: number = -1;
 
-  constructor(private httpService: HttpService, private _fb: FormBuilder) {
+  constructor(private httpService: HttpService, private _fb: FormBuilder, private validatorService: ValidatorFormService) {
     this.namePoint = '';
     this.width = 0;
     this.length = 0;
@@ -44,7 +46,18 @@ export class AppComponent implements OnInit {
       .subscribe(result => {this.locations = result.json(); this.AddJsonMarkers(); });
     this.jsonLength = this.locations.length;
 
+    this.initMap();
+    this.formHide();
 
+    this.myForm = this._fb.group({
+      namePoint: ['', [Validators.required, Validators.minLength(5)]],
+      width: ['', [Validators.required, this.validatorService.maxWidthValidator]],
+      length: ['', [Validators.required, this.validatorService.maxLengthValidator]]
+    });
+
+
+  }
+  initMap() {
     this.mapElement = map('map', { zoomControl: false })
       .setView([51.505, -0.09], 13);
     tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')
@@ -53,38 +66,8 @@ export class AppComponent implements OnInit {
     zoom.addTo(this.mapElement);
     const scale = control.scale({ position: 'bottomright' });
     scale.addTo(this.mapElement);
-
     this.icoOne = L.icon( { iconUrl: 'assets/marker-orange.png', iconAnchor: [11, 40], popupAnchor: [-3, -76]}  );
     this.icoTwo = L.icon( { iconUrl: 'assets/marker-red.png', iconAnchor: [11, 40], popupAnchor: [-3, -76]} );
-
-    this.myForm = this._fb.group({
-      namePoint: ['', [<any>Validators.required, <any>Validators.minLength(5)]],
-      width: ['', [<any>Validators.required, <any>this.maxWidthValidator]],
-      length: ['', [<any>Validators.required, <any>this.maxLengthValidator]]
-    });
-
-    this.formHide();
-  }
-
-  maxWidthValidator(control: AbstractControl ) {
-      const num = + control.value;
-      if ((num < -90) || (num > 90)) {
-        return {
-          minValue: {valid: false}
-        };
-      }
-      return null;
-    }
-
-  maxLengthValidator(control: AbstractControl ) {
-
-    const num = + control.value;
-    if ((num < -180) || (num > 180)) {
-      return {
-        minValue: {valid: false}
-      };
-    }
-    return null;
   }
 
   AddJsonMarkers() {
@@ -92,44 +75,64 @@ export class AppComponent implements OnInit {
       const mark = L.marker([this.locations[i]['length'], this.locations[i]['width']], {icon: this.icoTwo})
         .addTo(this.mapElement)
         .on('click', (e) => {
-          this.onClicked(e);
+          this.onClickedMarker(e);
         });
       this.marks.push(mark);
     }
   }
 
-  clicked(event, i ) {
-    console.log(event.selected);
-    debugger
-    if (event.selected === true) {
-      event.selected = false;
-      this.marks[i].setIcon(this.icoTwo);
-    } else {
-      event.selected = true;
+  onClickedList(event, i ) {
+    console.log(i);
+    if ((i !== this.indexOfMarkerSelected) && (this.locations[this.indexOfMarkerSelected]['selected'] == false)) {
+      this.locations[this.indexOfMarkerSelected]['selected'] = !this.locations[this.indexOfMarkerSelected]['selected'];
+      this.marks[this.indexOfMarkerSelected].setIcon(this.icoTwo);
+    }
+    this.indexOfMarkerSelected = i;
+    if (event.selected) {
+      event.selected = !event.selected;
       this.marks[i].setIcon(this.icoOne);
+    } else {
+      event.selected = !event.selected;
+      this.marks[i].setIcon(this.icoTwo);
     }
   }
-
-  onClicked(e) {
+  onClickedMarker(e) {
     let index = -1;
     for (let i = 0; i < this.locations.length; i++) {
       if ((this.locations[i]['width'] == e.latlng.lng) && (this.locations[i]['length'] == e.latlng.lat)) {
         index = i;
-        console.log(index);
       }
     }
-    this.clicked(this.locations[index], index);
+    if ((this.indexOfMarkerSelected !== -1) &&
+      (index !== this.indexOfMarkerSelected) && (this.locations[this.indexOfMarkerSelected]['selected'] !== true)) {
+        this.onClickedMarkerChangeIcon(this.locations[this.indexOfMarkerSelected], this.indexOfMarkerSelected);
+    }
+    this.indexOfMarkerSelected = index;
+    if (index !== -1) {
+      this.onClickedMarkerChangeIcon(this.locations[index], index);
+    } else {
+      console.log('error index = -1');
+    }
+  }
+  onClickedMarkerChangeIcon(event, i) {
+    if (event.selected) {
+      event.selected = !event.selected;
+      this.marks[i].setIcon(this.icoOne);
+    } else {
+      event.selected = !event.selected;
+      this.marks[i].setIcon(this.icoTwo);
+    }
   }
 
   formHide() {
-    const elementForm = document.getElementById('form');
-    const elementButton = document.getElementById('button-form');
-    elementButton.textContent = (elementButton.textContent === 'Open') ? 'Close' : 'Open';
-    elementForm.style.display = (elementForm.style.display === 'none') ? 'block' : 'none';
+    this.isFormedOpen = !this.isFormedOpen;
+    // const elementForm = document.getElementById('form');
+    // const elementButton = document.getElementById('button-form');
+    // elementButton.textContent = (elementButton.textContent === 'Open') ? 'Close' : 'Open';
+    // elementForm.style.display = (elementForm.style.display === 'none') ? 'block' : 'none';
   }
 
   addLocation(event): void {
-    console.log(event);
     this.locationObj = {
         namePoint: event.namePoint,
         width: event.width,
@@ -144,7 +147,7 @@ export class AppComponent implements OnInit {
       const mark = L.marker(markerLocation, {icon: this.icoTwo})
         .addTo(this.mapElement)
         .on('click', (e) => {
-          this.onClicked(e);
+          this.onClickedMarker(e);
         });
       this.marks.push(mark);
       this.mapElement.setView(markerLocation, 35);
@@ -153,9 +156,8 @@ export class AppComponent implements OnInit {
       event.width = 0;
       event.length = 0;
       console.log(this.locations);
-      //  event.preventDefault();
     }
-    deleteLocation(index) {
+  deleteLocation(index) {
       console.log(index, this.marks, this.locations);
       if (confirm('are you sure?') === true ) {
         this.mapElement.removeLayer(this.marks[index]);

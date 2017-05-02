@@ -3,17 +3,7 @@
       <button id="button-form" (click)="  formHide()">Close</button>
 
       <div id="form" >
-      <!--
-        <form (submit)="addLocation($event)">
-          <input [(ngModel)]="namePoint" (keyup.enter)="namePoint=''" class="textfield" name="namePoint" >
-          <input [(ngModel)]="width" (keyup.enter)="width=''" class="textfield" name="width"  pattern="[0-9]" maxlength="3">
-          <input [(ngModel)]="length" (keyup.enter)="length=''" class="textfield" name="length" maxlength="2">
-
-          <button  type="submit" [disabled]="namePoint==='' || width===0 || length===0" >Add Point</button>
-
-        </form>
-      -->
-  <form [formGroup]="myForm" novalidate (ngSubmit)="addLocation(myForm.value, myForm.valid)">
+  <form [formGroup]="myForm" novalidate (ngSubmit)="addLocation(myForm.value, myForm.valid)" *ngIf="isFormedOpen">
     <div class="form-group ">
       <label for="">Name</label>
       <input type="text" class="form-control" formControlName="namePoint">
@@ -43,7 +33,7 @@
       <div>
         <div *ngFor="let locol of locations; let i=index"  >
         	<!--<input type="checkbox" class="checkbox" [(ngModel)]="locol.selected" />-->
-          <a href="#" (click)="clicked(locol, i)">
+          <a href="#" (click)="onClickedList(locol, i)">
 			      <span [ngClass]="{'checked': locol.selected}">Name: {{ locol.namePoint }}</span>
             <span [ngClass]="{'checked': locol.selected}">Length: {{ locol.length }}</span>
             <span [ngClass]="{'checked': locol.selected}">Width: {{ locol.width }}</span>
@@ -51,15 +41,7 @@
 			  <span (click)="deleteLocation(i)" class="delete-icon">[X]</span>
         </div>
       </div>
-  <!--
-  <div class="res" (click)="clicked(res)" *ngFor="let res of result;">
-    <a href="#" >
-      <span [ngClass]="{'checked': res.selected}">Name: {{res.namePoint}}</span>
-      <span [ngClass]="{'checked': res.selected}">Length: {{res.length}}</span>
-      <span [ngClass]="{'checked': res.selected}">Width: {{res.width}}</span>
-    </a>
-  </div>
--->
+
   <div id="map" style="height: 500px;">
   </div>
 
