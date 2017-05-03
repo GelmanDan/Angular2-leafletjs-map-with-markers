@@ -1,6 +1,6 @@
 <div class="map">
 
-      <button id="button-form" (click)="  formHide()">Close</button>
+      <button id="button-form" (click)="formHide()">{{button}}</button>
 
       <div id="form" >
   <form [formGroup]="myForm" novalidate (ngSubmit)="addLocation(myForm.value, myForm.valid)" *ngIf="isFormedOpen">

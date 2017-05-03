@@ -29,8 +29,9 @@ export class AppComponent implements OnInit {
   marks: any;
   jsonLength: number;
   myForm: FormGroup;
-  isFormedOpen: boolean = true;
+  isFormedOpen: Boolean = true;
   indexOfMarkerSelected: number = -1;
+  button: String = 'Open';
 
   constructor(private httpService: HttpService, private _fb: FormBuilder, private validatorForm: ValidatorFormService) {
     this.namePoint = '';
@@ -56,8 +57,6 @@ export class AppComponent implements OnInit {
       width: ['', [Validators.required, this.validatorForm.maxWidthValidator]],
       length: ['', [Validators.required, this.validatorForm.maxLengthValidator]]
     });
-
-
   }
   initMap() {
     this.mapElement = map('map', { zoomControl: false })
@@ -84,9 +83,11 @@ export class AppComponent implements OnInit {
   }
 
   onClickedList(event, i ) {
-    if ((i !== this.indexOfMarkerSelected) && (this.locations[this.indexOfMarkerSelected]['selected'] == false)) {
-      this.locations[this.indexOfMarkerSelected]['selected'] = !this.locations[this.indexOfMarkerSelected]['selected'];
-      this.marks[this.indexOfMarkerSelected].setIcon(this.icoTwo);
+    if (this.indexOfMarkerSelected !== -1) {
+      if ((i !== this.indexOfMarkerSelected) && (this.locations[this.indexOfMarkerSelected]['selected'] == false)) {
+        this.locations[this.indexOfMarkerSelected]['selected'] = !this.locations[this.indexOfMarkerSelected]['selected'];
+        this.marks[this.indexOfMarkerSelected].setIcon(this.icoTwo);
+      }
     }
     this.indexOfMarkerSelected = i;
     if (event.selected) {
@@ -127,10 +128,11 @@ export class AppComponent implements OnInit {
 
   formHide() {
     this.isFormedOpen = !this.isFormedOpen;
-    // const elementForm = document.getElementById('form');
-    // const elementButton = document.getElementById('button-form');
-    // elementButton.textContent = (elementButton.textContent === 'Open') ? 'Close' : 'Open';
-    // elementForm.style.display = (elementForm.style.display === 'none') ? 'block' : 'none';
+    if (this.isFormedOpen) {
+      this.button = 'Close';
+    } else {
+      this.button = 'Open';
+    }
   }
 
   addLocation(event): void {
